@@ -10,8 +10,8 @@
 /*  define DFS if you choose DFS
  * or define BFS if you choose BFS
 */
-#define DFS j
-//#define BFS j
+//#define DFS j
+#define BFS j
 
 #ifdef DFS
 #define STACK_QUEUE j
@@ -29,7 +29,7 @@ using namespace std;
 struct Node{
     array<int, TABLE_SIZE> table;
     vector<Node*> next;
-    array<bool, 5> is_success = {false};
+    array<bool, 5> is_success;
 };
 
 
@@ -41,7 +41,8 @@ public:
     void readFile(const char* path);
     void printNode(Node* node);
     void selectMask();
-    void createTree();
+    void createTreeAllFlow();
+    void createTreeOneFlow();
 
 private:
     Node* newNode(Node*, int, int, int);
@@ -52,6 +53,7 @@ private:
 #else
     queue<Node*> fqueue;
 #endif
+    vector<int> priority;
 };
 
 
@@ -96,7 +98,12 @@ void FlowFree::printNode(Node* node) {
 
 
 bool canwalkSort(const vector<int>& v1, const vector<int>& v2) { 
-    return v1[2] > v2[2]; 
+    if (v1[2] < v2[2])
+        return true;
+    if (v1[2] == v2[2])
+        return v1[1] < v1[2];
+
+    return false;
 } 
 
 void FlowFree::selectMask() {
@@ -140,20 +147,24 @@ void FlowFree::selectMask() {
             << ", canwalk: " << canwalk_itr[2]
             << endl;
 
-    vector<int> mask_duplicate(MASK_NUM);
 
     for (auto& canwalk_itr: canwalk) {
-        if (find(mask_duplicate.begin(), mask_duplicate.end(), canwalk_itr[1])  == mask_duplicate.end()) {
-            mask_duplicate.push_back(canwalk_itr[1]);
-
+        if (find(this->priority.begin(), this->priority.end(), canwalk_itr[1])  == this->priority.end()) {
+            priority.push_back(canwalk_itr[1]);
             cur->table[canwalk_itr[0]] = canwalk_itr[1] + MASK_NUM;
         }
     }
+
+    clog << endl << "# mask priority" << endl;
+    for (auto i: this->priority)
+        clog << i << ' ';
+    clog << endl;
 
     clog << endl << "# table after select mask" << endl;
     for (int i=0; i<TABLE_SIZE; i++)
         clog << "index: " << i << " mask: " << cur->table[i] << endl;
 }
+
 
 Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int success_mask) {
     Node* node = new Node;
@@ -170,7 +181,185 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int success_mas
 }
 
 
-void FlowFree::createTree() {
+void FlowFree::createTreeOneFlow() {
+
+    Node* cur = this->root;
+    int depth = 0;
+
+    auto mask_itr = this->priority.begin();
+
+    while ( !all_of(cur->is_success.begin(), cur->is_success.end(), [](bool i){ return i; }) ) {
+
+        cout << "success:";
+        for (const auto i: cur->is_success)
+            cout << i << ' ';
+        cout << endl;
+
+        cout << "cur node:" << endl;
+        this->printNode(cur);
+
+
+        for (int i=0; i<TABLE_SIZE; i++) {
+            if (cur->table[i] == *mask_itr) {
+
+                if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i-1, cur->table[i]);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else                    
+                    this->fqueue.push(node);
+#endif
+
+                    advance(mask_itr, 1);
+                    clog << "<- !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i+1, cur->table[i]);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    advance(mask_itr, 1);
+                    clog << "-> !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i-MASK_NUM, cur->table[i]);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    advance(mask_itr, 1);
+                    clog << "^ !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i+MASK_NUM, cur->table[i]);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    advance(mask_itr, 1);
+                    clog << "V !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+
+
+                if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
+                    Node* node = this->newNode(cur, i, i-1, 0);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    clog << "<-" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
+                    Node* node = this->newNode(cur, i, i+1, 0);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    clog << "->" << endl;
+                    this->printNode(node);
+                    break;
+                }
+
+                if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == 0) {
+                    Node* node = this->newNode(cur, i, i-MASK_NUM, 0);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    clog << "^" << endl;
+                    this->printNode(node);
+                    break;
+                }
+
+                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == 0) {
+                    Node* node = this->newNode(cur, i, i+MASK_NUM, 0);
+
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
+
+                    clog << "V" << endl;
+                    this->printNode(node);
+                    break;
+                }
+            }
+        }
+
+        cout << "depth: " << depth
+            << ", child node: " << cur->next.size()
+#ifdef STACK_QUEUE
+            << ", stack size: " << this->fstack.size()
+#else
+            << ", queue size: " << this->fqueue.size()
+#endif
+            << endl;
+
+#ifdef STACK_QUEUE
+        cur = this->fstack.top();
+        this->fstack.pop();
+#else
+        cur = this->fqueue.front();
+        this->fqueue.pop();
+#endif
+
+        depth++;
+//        if (depth == 10)
+//            break;
+    }
+}
+
+
+void FlowFree::createTreeAllFlow() {
 
     Node* cur = this->root;
     int depth = 0;
@@ -331,7 +520,7 @@ void FlowFree::createTree() {
 #endif
 
         depth++;
-        //if (depth == MASK_NUM)
+        //if (depth == 1)
         //    break;
     }
 }
@@ -346,7 +535,8 @@ int main(int argc, char** argv) {
     FlowFree* flowfree = new FlowFree();
     flowfree->readFile(argv[1]);
     flowfree->selectMask();
-    flowfree->createTree();
+//    flowfree->createTreeAllFlow();
+    flowfree->createTreeOneFlow();
 
     return 0;
 }
