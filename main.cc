@@ -112,10 +112,10 @@ void FlowFree::selectMask() {
             if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0)
                 (*canwalk_itr)[2]++;
 
-            if (i/MASK_NUM !=0 && cur->table[i-5] == 0)
+            if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == 0)
                 (*canwalk_itr)[2]++;
 
-            if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == 0)
+            if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == 0)
                 (*canwalk_itr)[2]++;
 
             clog << "index: " << (*canwalk_itr)[0]
@@ -136,7 +136,7 @@ void FlowFree::selectMask() {
             << ", canwalk: " << canwalk_itr[2]
             << endl;
 
-    vector<int> mask_duplicate(5);
+    vector<int> mask_duplicate(MASK_NUM);
 
     for (auto& canwalk_itr: canwalk) {
         if (find(mask_duplicate.begin(), mask_duplicate.end(), canwalk_itr[1])  == mask_duplicate.end()) {
@@ -217,8 +217,8 @@ void FlowFree::createTree() {
                     break;
                 }
 
-                if (i/MASK_NUM !=0 && cur->table[i-5] == cur->table[i] + MASK_NUM) {
-                    Node* node = this->newNode(cur, i, i-5, cur->table[i]);
+                if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i-MASK_NUM, cur->table[i]);
 
                     cur->next.push_back(node);
 #ifdef STACK_QUEUE
@@ -233,8 +233,8 @@ void FlowFree::createTree() {
                     break;
                 }
 
-                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == cur->table[i] + MASK_NUM) {
-                    Node* node = this->newNode(cur, i, i+5, cur->table[i]);
+                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i+MASK_NUM, cur->table[i]);
 
                     cur->next.push_back(node);
 #ifdef STACK_QUEUE
@@ -279,8 +279,8 @@ void FlowFree::createTree() {
                     this->printNode(node);
                 }
 
-                if (i/MASK_NUM !=0 && cur->table[i-5] == 0) {
-                    Node* node = this->newNode(cur, i, i-5, 0);
+                if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == 0) {
+                    Node* node = this->newNode(cur, i, i-MASK_NUM, 0);
 
                     cur->next.push_back(node);
 #ifdef STACK_QUEUE
@@ -293,8 +293,8 @@ void FlowFree::createTree() {
                     this->printNode(node);
                 }
 
-                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == 0) {
-                    Node* node = this->newNode(cur, i, i+5, 0);
+                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == 0) {
+                    Node* node = this->newNode(cur, i, i+MASK_NUM, 0);
 
                     cur->next.push_back(node);
 #ifdef STACK_QUEUE
@@ -327,7 +327,7 @@ void FlowFree::createTree() {
 #endif
 
         depth++;
-        //if (depth == 5)
+        //if (depth == MASK_NUM)
         //    break;
     }
 }
