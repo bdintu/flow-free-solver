@@ -6,13 +6,12 @@
 
 #define MASK_NUM 5
 #define TABLE_SIZE 5*5
-#define PROP_OF_EVENT 20
 
 using namespace std;
 
 struct Node{
 	int table[TABLE_SIZE];
-	Node* next[PROP_OF_EVENT];
+    vector<Node*> next;
 };
 
 
@@ -26,34 +25,27 @@ public:
     void createTree();
 
 private:
-	void newTree();
-	void deleteTree();
+    Node* newNode(Node*, int, int);
 
 	Node* root;
-    queue<Node*> q;
+    queue<Node*> fqueue;
+    vector<bool> is_success;
 };
 
 
 FlowFree::FlowFree(){
-    newTree();
+	this->root = NULL;
+    is_success.resize(MASK_NUM, false);
 }
+
 
 FlowFree::~FlowFree(){
-	deleteTree();
-}
 
-void FlowFree::newTree(){
-	this->root = NULL;
-}
-
-void FlowFree::deleteTree(){
 }
 
 
 void FlowFree::readFile(const char* path) {
     Node* node = new Node;
-    for(int i=0; i<PROP_OF_EVENT; i++)
-        node->next[i] = NULL;
 
     ifstream file(path) ;
     if (file) {
@@ -77,7 +69,7 @@ void FlowFree::selectMask() {
     vector<vector<int>> canwalk(2*MASK_NUM, vector<int>(3, 0));
     auto canwalk_itr = canwalk.begin();
 
-    Node* cur = root;
+    Node* cur = this->root;
 
     clog << endl << "# select mask" << endl;
     for (int i=0; i<TABLE_SIZE; i++) {
@@ -129,9 +121,66 @@ void FlowFree::selectMask() {
         clog << "index: " << i << " mask: " << cur->table[i] << endl;
 }
 
+Node* FlowFree::newNode(Node* cur, int cur_index, int new_index) {
+    Node* node = new Node;
+
+    node->table[new_index] = cur->table[cur_index];
+    node->table[cur_index] = cur->table[cur_index] + 3*MASK_NUM;
+
+    return node;
+}
+
 
 void FlowFree::createTree() {
 
+    Node* cur = this->root;
+    int depth = 0;
+
+    while ( !all_of(this->is_success.begin(), this->is_success.end(), [](bool i){ return i; }) ) {
+
+        for (int i=0; i<TABLE_SIZE; i++) {
+            if (cur->table[i] > 0 && cur->table[i] < MASK_NUM +1) {
+
+                if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
+                    Node* node = this->newNode(cur, i, i-1);
+
+                    cur->next.push_back(node);
+                    this->fqueue.push(node);
+                }
+
+                if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
+                    Node* node = this->newNode(cur, i, i+1);
+
+                    cur->next.push_back(node);
+                    this->fqueue.push(node);
+                }
+
+                if (i/MASK_NUM !=0 && cur->table[i-5] == 0) {
+                    Node* node = this->newNode(cur, i, i-5);
+
+                    cur->next.push_back(node);
+                    this->fqueue.push(node);
+                }
+
+                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == 0) {
+                    Node* node = this->newNode(cur, i, i+5);
+
+                    cur->next.push_back(node);
+                    this->fqueue.push(node);
+                }
+            }
+        }
+
+        cout << "depth: " << depth
+            << ", child node: " << cur->next.size()
+            << ", queue size: " << this->fqueue.size()
+            << endl;
+
+        cur = this->fqueue.front();
+        this->fqueue.pop();
+
+        depth++;
+    }
 }
 
 
