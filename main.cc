@@ -3,10 +3,12 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include <stack>
 #include <queue>
 
 #define MASK_NUM 5
-#define TABLE_SIZE 5*5
+#define TABLE_SIZE MASK_NUM * MASK_NUM
+#define STACK_QUEUE false
 
 using namespace std;
 
@@ -31,7 +33,11 @@ private:
     Node* newNode(Node*, int, int, int);
 
 	Node* root;
+#ifdef STACK_QUEUE
+    stack<Node*> fstack;
+#else
     queue<Node*> fqueue;
+#endif
 };
 
 
@@ -172,7 +178,13 @@ void FlowFree::createTree() {
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
                     Node* node = this->newNode(cur, i, i-1, cur->table[i]);
+
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else                    
+                    this->fqueue.push(node);
+#endif
 
                     clog << "<- !!" << endl;
                     this->printNode(node);
@@ -182,12 +194,13 @@ void FlowFree::createTree() {
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
                     Node* node = this->newNode(cur, i, i+1, cur->table[i]);
-                    cur->next.push_back(node);
-        cout << "success:";
-        for (const auto i: node->is_success)
-            cout << i << ' ';
-        cout << endl;
 
+                    cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
 
                     clog << "-> !!" << endl;
                     this->printNode(node);
@@ -197,7 +210,13 @@ void FlowFree::createTree() {
 
                 if (i/MASK_NUM !=0 && cur->table[i-5] == cur->table[i] + MASK_NUM) {
                     Node* node = this->newNode(cur, i, i-5, cur->table[i]);
+
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
 
                     clog << "^ !!" << endl;
                     this->printNode(node);
@@ -207,7 +226,13 @@ void FlowFree::createTree() {
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == cur->table[i] + MASK_NUM) {
                     Node* node = this->newNode(cur, i, i+5, cur->table[i]);
+
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
+                    this->fqueue.push(node);
+#endif
 
                     clog << "V !!" << endl;
                     this->printNode(node);
@@ -221,7 +246,11 @@ void FlowFree::createTree() {
                     Node* node = this->newNode(cur, i, i-1, 0);
 
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
                     this->fqueue.push(node);
+#endif
 
                     clog << "<-" << endl;
                     this->printNode(node);
@@ -231,7 +260,11 @@ void FlowFree::createTree() {
                     Node* node = this->newNode(cur, i, i+1, 0);
 
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
                     this->fqueue.push(node);
+#endif
 
                     clog << "->" << endl;
                     this->printNode(node);
@@ -241,7 +274,11 @@ void FlowFree::createTree() {
                     Node* node = this->newNode(cur, i, i-5, 0);
 
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
                     this->fqueue.push(node);
+#endif
 
                     clog << "^" << endl;
                     this->printNode(node);
@@ -251,7 +288,11 @@ void FlowFree::createTree() {
                     Node* node = this->newNode(cur, i, i+5, 0);
 
                     cur->next.push_back(node);
+#ifdef STACK_QUEUE
+                    this->fstack.push(node);
+#else
                     this->fqueue.push(node);
+#endif
 
                     clog << "V" << endl;
                     this->printNode(node);
@@ -261,13 +302,24 @@ void FlowFree::createTree() {
 
         cout << "depth: " << depth
             << ", child node: " << cur->next.size()
+#ifdef STACK_QUEUE
+            << ", stack size: " << this->fstack.size()
+#else
             << ", queue size: " << this->fqueue.size()
+#endif
             << endl;
 
+#ifdef STACK_QUEUE
+        cur = this->fstack.top();
+        this->fstack.pop();
+#else
         cur = this->fqueue.front();
         this->fqueue.pop();
+#endif
 
         depth++;
+        //if (depth == 5)
+        //    break;
     }
 }
 
