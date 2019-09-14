@@ -7,10 +7,15 @@
 #define MASK_NUM 5
 #define TABLE_SIZE MASK_NUM * MASK_NUM
 
-/* remove define STACK_QUEUE if you choose BFS
- * or stay define STACK_QUEUE if you choose DFS
+/*  define DFS if you choose DFS
+ * or define BFS if you choose BFS
 */
+#define DFS j
+//#define BFS j
+
+#ifdef DFS
 #define STACK_QUEUE j
+#endif
 
 #ifdef STACK_QUEUE
 #include <stack>
@@ -24,7 +29,7 @@ using namespace std;
 struct Node{
     array<int, TABLE_SIZE> table;
     vector<Node*> next;
-    vector<bool> is_success;
+    array<bool, 5> is_success = {false};
 };
 
 
@@ -62,7 +67,6 @@ FlowFree::~FlowFree(){
 
 void FlowFree::readFile(const char* path) {
     Node* node = new Node;
-    node->is_success.resize(MASK_NUM, false);
 
     ifstream file(path) ;
     if (file) {
