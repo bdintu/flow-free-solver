@@ -3,14 +3,23 @@
 #include <algorithm>
 #include <array>
 #include <vector>
-#include <stack>
-#include <queue>
 
 #define MASK_NUM 5
 #define TABLE_SIZE MASK_NUM * MASK_NUM
-#define STACK_QUEUE false
+
+/* remove define STACK_QUEUE if you choose BFS
+ * or stay define STACK_QUEUE if you choose DFS
+*/
+#define STACK_QUEUE j
+
+#ifdef STACK_QUEUE
+#include <stack>
+#else
+#include <queue>
+#endif
 
 using namespace std;
+
 
 struct Node{
     array<int, TABLE_SIZE> table;
