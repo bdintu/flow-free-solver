@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <array>
 #include <vector>
 #include <queue>
 
@@ -10,8 +11,9 @@
 using namespace std;
 
 struct Node{
-	int table[TABLE_SIZE];
+    array<int, TABLE_SIZE> table;
     vector<Node*> next;
+    vector<bool> is_success;
 };
 
 
@@ -26,17 +28,15 @@ public:
     void createTree();
 
 private:
-    Node* newNode(Node*, int, int);
+    Node* newNode(Node*, int, int, int);
 
 	Node* root;
     queue<Node*> fqueue;
-    vector<bool> is_success;
 };
 
 
 FlowFree::FlowFree(){
 	this->root = NULL;
-    is_success.resize(MASK_NUM, false);
 }
 
 
@@ -47,6 +47,7 @@ FlowFree::~FlowFree(){
 
 void FlowFree::readFile(const char* path) {
     Node* node = new Node;
+    node->is_success.resize(MASK_NUM, false);
 
     ifstream file(path) ;
     if (file) {
@@ -69,7 +70,8 @@ void FlowFree::printNode(Node* node) {
 
         if (i%MASK_NUM==MASK_NUM-1)
             cout << endl;
-    }
+    } 
+
     cout << endl;
 }
 
@@ -134,12 +136,16 @@ void FlowFree::selectMask() {
         clog << "index: " << i << " mask: " << cur->table[i] << endl;
 }
 
-Node* FlowFree::newNode(Node* cur, int cur_index, int new_index) {
+Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int success_mask) {
     Node* node = new Node;
 
-    copy(cur->table, cur->table +TABLE_SIZE, node->table);
+    node->table = cur->table;
     node->table[new_index] = cur->table[cur_index];
     node->table[cur_index] = cur->table[cur_index] + 2*MASK_NUM;
+
+    node->is_success = cur->is_success;
+    if (success_mask)
+        node->is_success[success_mask -1] = true;
 
     return node;
 }
@@ -150,19 +156,24 @@ void FlowFree::createTree() {
     Node* cur = this->root;
     int depth = 0;
 
-    while ( !all_of(this->is_success.begin(), this->is_success.end(), [](bool i){ return i; }) ) {
+    while ( !all_of(cur->is_success.begin(), cur->is_success.end(), [](bool i){ return i; }) ) {
+
+        cout << "success:";
+        for (const auto i: cur->is_success)
+            cout << i << ' ';
+        cout << endl;
 
         cout << "cur node:" << endl;
         this->printNode(cur);
+
 
         for (int i=0; i<TABLE_SIZE; i++) {
             if (cur->table[i] > 0 && cur->table[i] < MASK_NUM +1) {
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
-                    Node* node = this->newNode(cur, i, i-1);
-
+                    Node* node = this->newNode(cur, i, i-1, cur->table[i]);
                     cur->next.push_back(node);
-                    this->is_success[cur->table[i] -1] = true;
+
                     clog << "<- !!" << endl;
                     this->printNode(node);
 
@@ -170,13 +181,14 @@ void FlowFree::createTree() {
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
-                    Node* node = this->newNode(cur, i, i+1);
-
+                    Node* node = this->newNode(cur, i, i+1, cur->table[i]);
                     cur->next.push_back(node);
-                    this->is_success[cur->table[i] -1] = true;
-                    for (auto i:is_success)
-                        cout << i << ' ';
-                    cout << endl;
+        cout << "success:";
+        for (const auto i: node->is_success)
+            cout << i << ' ';
+        cout << endl;
+
+
                     clog << "-> !!" << endl;
                     this->printNode(node);
 
@@ -184,10 +196,9 @@ void FlowFree::createTree() {
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-5] == cur->table[i] + MASK_NUM) {
-                    Node* node = this->newNode(cur, i, i-5);
-
+                    Node* node = this->newNode(cur, i, i-5, cur->table[i]);
                     cur->next.push_back(node);
-                    this->is_success[cur->table[i] -1] = true;
+
                     clog << "^ !!" << endl;
                     this->printNode(node);
 
@@ -195,10 +206,9 @@ void FlowFree::createTree() {
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == cur->table[i] + MASK_NUM) {
-                    Node* node = this->newNode(cur, i, i+5);
-
+                    Node* node = this->newNode(cur, i, i+5, cur->table[i]);
                     cur->next.push_back(node);
-                    this->is_success[cur->table[i] -1] = true;
+
                     clog << "V !!" << endl;
                     this->printNode(node);
 
@@ -208,37 +218,41 @@ void FlowFree::createTree() {
 
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
-                    Node* node = this->newNode(cur, i, i-1);
+                    Node* node = this->newNode(cur, i, i-1, 0);
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+
                     clog << "<-" << endl;
                     this->printNode(node);
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
-                    Node* node = this->newNode(cur, i, i+1);
+                    Node* node = this->newNode(cur, i, i+1, 0);
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+
                     clog << "->" << endl;
                     this->printNode(node);
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-5] == 0) {
-                    Node* node = this->newNode(cur, i, i-5);
+                    Node* node = this->newNode(cur, i, i-5, 0);
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+
                     clog << "^" << endl;
                     this->printNode(node);
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == 0) {
-                    Node* node = this->newNode(cur, i, i+5);
+                    Node* node = this->newNode(cur, i, i+5, 0);
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+
                     clog << "V" << endl;
                     this->printNode(node);
                 }
