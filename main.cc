@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <algorithm>
+#include <vector>
+#include <queue>
 
 #define MASK_NUM 5
 #define TABLE_SIZE 5*5
@@ -11,7 +12,7 @@ using namespace std;
 
 struct Node{
 	int table[TABLE_SIZE];
-	Node *next[PROP_OF_EVENT];
+	Node* next[PROP_OF_EVENT];
 };
 
 
@@ -22,33 +23,35 @@ public:
 
     void readFile(const char* path);
     void selectMask();
+    void createTree();
 
 private:
-	void createTree();
-	void destroyTree();
+	void newTree();
+	void deleteTree();
 
-	Node *root;
+	Node* root;
+    queue<Node*> q;
 };
 
 
 FlowFree::FlowFree(){
-    createTree();
+    newTree();
 }
 
 FlowFree::~FlowFree(){
-	destroyTree();
+	deleteTree();
 }
 
-void FlowFree::createTree(){
-	root = NULL;
+void FlowFree::newTree(){
+	this->root = NULL;
 }
 
-void FlowFree::destroyTree(){
+void FlowFree::deleteTree(){
 }
 
 
 void FlowFree::readFile(const char* path) {
-    Node *node = new Node;
+    Node* node = new Node;
     for(int i=0; i<PROP_OF_EVENT; i++)
         node->next[i] = NULL;
 
@@ -63,7 +66,7 @@ void FlowFree::readFile(const char* path) {
         cerr << "failed to open file " << path << endl;
     }
 
-    root = node;
+    this->root = node;
 }
 
 bool canwalkSort(const vector<int>& v1, const vector<int>& v2) { 
@@ -72,58 +75,63 @@ bool canwalkSort(const vector<int>& v1, const vector<int>& v2) {
 
 void FlowFree::selectMask() {
     vector<vector<int>> canwalk(2*MASK_NUM, vector<int>(3, 0));
-    auto it = canwalk.begin();
+    auto canwalk_itr = canwalk.begin();
+
+    Node* cur = root;
 
     clog << endl << "# select mask" << endl;
     for (int i=0; i<TABLE_SIZE; i++) {
-        if (root->table[i] != 0) {
-            (*it) = {i, root->table[i], 0};
+        if (cur->table[i] != 0) {
+            (*canwalk_itr) = {i, cur->table[i], 0};
 
-            if (i%MASK_NUM !=0 && root->table[i-1] == 0)
-                (*it)[2]++;
+            if (i%MASK_NUM !=0 && cur->table[i-1] == 0)
+                (*canwalk_itr)[2]++;
 
-            if (i%MASK_NUM !=MASK_NUM-1 && root->table[i+1] == 0)
-                (*it)[2]++;
+            if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0)
+                (*canwalk_itr)[2]++;
 
-            if (i/MASK_NUM !=0 && root->table[i-5] == 0)
-                (*it)[2]++;
+            if (i/MASK_NUM !=0 && cur->table[i-5] == 0)
+                (*canwalk_itr)[2]++;
 
-            if (i/MASK_NUM !=MASK_NUM-1 && root->table[i+5] == 0)
-                (*it)[2]++;
+            if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == 0)
+                (*canwalk_itr)[2]++;
 
-            clog << "index: " << (*it)[0]
-                << ", mask: " << (*it)[1]
-                << ", canwalk: " << (*it)[2]
+            clog << "index: " << (*canwalk_itr)[0]
+                << ", mask: " << (*canwalk_itr)[1]
+                << ", canwalk: " << (*canwalk_itr)[2]
                 << endl;
 
-            advance(it, 1);
+            advance(canwalk_itr, 1);
         }
     }
 
     sort(canwalk.begin(), canwalk.end(), canwalkSort);
 
     clog << endl << "# select mask after sorted" << endl;
-    for (auto& it: canwalk)
-        clog << "index: " << it[0]
-            << ", mask: " << it[1]
-            << ", canwalk: " << it[2]
+    for (auto& canwalk_itr: canwalk)
+        clog << "index: " << canwalk_itr[0]
+            << ", mask: " << canwalk_itr[1]
+            << ", canwalk: " << canwalk_itr[2]
             << endl;
-
-
 
     vector<int> mask_duplicate(5);
 
-    for (auto& it: canwalk) {
-        if (find(mask_duplicate.begin(), mask_duplicate.end(), it[1])  == mask_duplicate.end()) {
-            mask_duplicate.push_back(it[1]);
+    for (auto& canwalk_itr: canwalk) {
+        if (find(mask_duplicate.begin(), mask_duplicate.end(), canwalk_itr[1])  == mask_duplicate.end()) {
+            mask_duplicate.push_back(canwalk_itr[1]);
 
-            root->table[it[0]] = it[1] + MASK_NUM;
+            cur->table[canwalk_itr[0]] = canwalk_itr[1] + MASK_NUM;
         }
     }
 
     clog << endl << "# table after select mask" << endl;
     for (int i=0; i<TABLE_SIZE; i++)
-        clog << "index: " << i << " mask: " << root->table[i] << endl;
+        clog << "index: " << i << " mask: " << cur->table[i] << endl;
+}
+
+
+void FlowFree::createTree() {
+
 }
 
 
@@ -133,9 +141,10 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    FlowFree *flowfree = new FlowFree();
+    FlowFree* flowfree = new FlowFree();
     flowfree->readFile(argv[1]);
     flowfree->selectMask();
+    flowfree->createTree();
 
     return 0;
 }
