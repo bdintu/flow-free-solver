@@ -27,9 +27,9 @@ using namespace std;
 
 
 struct Node{
-    array<int, TABLE_SIZE> table;
+    array<int, TABLE_SIZE> table = {0};
     vector<Node*> next;
-    array<bool, 5> is_success;
+    array<bool, 5> is_success = {false};
 };
 
 
@@ -95,20 +95,13 @@ void FlowFree::printNode(Node* node) {
 
     cout << endl;
 }
-
-
-bool canwalkSort(const vector<int>& v1, const vector<int>& v2) { 
-    if (v1[2] < v2[2])
-        return true;
-    if (v1[2] == v2[2])
-        return v1[1] < v1[2];
-
-    return false;
-} 
+ 
 
 void FlowFree::selectMask() {
     vector<vector<int>> canwalk(2*MASK_NUM, vector<int>(3, 0));
     auto canwalk_itr = canwalk.begin();
+
+    array<int, MASK_NUM> walksum = {0};
 
     Node* cur = this->root;
 
@@ -134,11 +127,22 @@ void FlowFree::selectMask() {
                 << ", canwalk: " << (*canwalk_itr)[2]
                 << endl;
 
+            walksum[(*canwalk_itr)[1] -1] += (*canwalk_itr)[2];
             advance(canwalk_itr, 1);
         }
     }
 
-    sort(canwalk.begin(), canwalk.end(), canwalkSort);
+    clog << endl << "# walk sum" << endl;
+    for (auto i: walksum)
+        clog << i << ' ';
+    clog << endl;
+
+    sort(canwalk.begin(), canwalk.end(), [walksum](const vector<int>& v1, const vector<int>& v2){
+        if (v1[2] == v2[2])
+            return walksum[v1[1] -1] < walksum[v2[1] -1];
+
+        return v1[2] < v2[2];
+    });
 
     clog << endl << "# select mask after sorted" << endl;
     for (auto& canwalk_itr: canwalk)
