@@ -21,6 +21,7 @@ public:
 	~FlowFree();
 
     void readFile(const char* path);
+    void printNode(Node* node);
     void selectMask();
     void createTree();
 
@@ -60,6 +61,18 @@ void FlowFree::readFile(const char* path) {
 
     this->root = node;
 }
+
+
+void FlowFree::printNode(Node* node) {
+    for (int i=0; i<TABLE_SIZE; i++) {
+        cout << node->table[i] << ' ';
+
+        if (i%MASK_NUM==MASK_NUM-1)
+            cout << endl;
+    }
+    cout << endl;
+}
+
 
 bool canwalkSort(const vector<int>& v1, const vector<int>& v2) { 
     return v1[2] > v2[2]; 
@@ -124,8 +137,9 @@ void FlowFree::selectMask() {
 Node* FlowFree::newNode(Node* cur, int cur_index, int new_index) {
     Node* node = new Node;
 
+    copy(cur->table, cur->table +TABLE_SIZE, node->table);
     node->table[new_index] = cur->table[cur_index];
-    node->table[cur_index] = cur->table[cur_index] + 3*MASK_NUM;
+    node->table[cur_index] = cur->table[cur_index] + 2*MASK_NUM;
 
     return node;
 }
@@ -138,14 +152,68 @@ void FlowFree::createTree() {
 
     while ( !all_of(this->is_success.begin(), this->is_success.end(), [](bool i){ return i; }) ) {
 
+        cout << "cur node:" << endl;
+        this->printNode(cur);
+
         for (int i=0; i<TABLE_SIZE; i++) {
             if (cur->table[i] > 0 && cur->table[i] < MASK_NUM +1) {
+
+                if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i-1);
+
+                    cur->next.push_back(node);
+                    this->is_success[cur->table[i] -1] = true;
+                    clog << "<- !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i+1);
+
+                    cur->next.push_back(node);
+                    this->is_success[cur->table[i] -1] = true;
+                    for (auto i:is_success)
+                        cout << i << ' ';
+                    cout << endl;
+                    clog << "-> !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i/MASK_NUM !=0 && cur->table[i-5] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i-5);
+
+                    cur->next.push_back(node);
+                    this->is_success[cur->table[i] -1] = true;
+                    clog << "^ !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+                if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == cur->table[i] + MASK_NUM) {
+                    Node* node = this->newNode(cur, i, i+5);
+
+                    cur->next.push_back(node);
+                    this->is_success[cur->table[i] -1] = true;
+                    clog << "V !!" << endl;
+                    this->printNode(node);
+
+                    break;
+                }
+
+
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
                     Node* node = this->newNode(cur, i, i-1);
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+                    clog << "<-" << endl;
+                    this->printNode(node);
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
@@ -153,6 +221,8 @@ void FlowFree::createTree() {
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+                    clog << "->" << endl;
+                    this->printNode(node);
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-5] == 0) {
@@ -160,6 +230,8 @@ void FlowFree::createTree() {
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+                    clog << "^" << endl;
+                    this->printNode(node);
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+5] == 0) {
@@ -167,6 +239,8 @@ void FlowFree::createTree() {
 
                     cur->next.push_back(node);
                     this->fqueue.push(node);
+                    clog << "V" << endl;
+                    this->printNode(node);
                 }
             }
         }
