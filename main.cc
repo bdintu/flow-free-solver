@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include "flowfree.cc"
+#include "select_mask.cc"
+#include "create_tree.cc"
 
 using namespace std;
 
