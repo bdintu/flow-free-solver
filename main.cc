@@ -186,9 +186,9 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int success_mas
     node->table[new_index] = cur->table[cur_index];
     node->table[cur_index] = cur->table[cur_index] + 2*MASK_NUM;
 
-    node->is_success = cur->is_success;
-    if (success_mask)
-        node->is_success[success_mask -1] = true;
+//    node->is_success = cur->is_success;
+//    if (success_mask)
+//        node->is_success[success_mask -1] = true;
 
     node->mask_itr = cur->mask_itr;
     node->depth = cur->depth +1;
@@ -205,16 +205,14 @@ void FlowFree::createTreeOneFlow() {
 #ifdef STACK_QUEUE
     this->fstack.push(this->root);
     
-    while ( !this->fstack.empty() && !all_of(cur->is_success.begin(), cur->is_success.end(), [](bool i){ return i; }) ) {
-
+    while ( !this->fstack.empty() ) {
         cur = this->fstack.top();
         this->fstack.pop();
 
 #else
     this->fqueue.push(this->root);
     
-    while ( !this->fqueue.empty() && !all_of(cur->is_success.begin(), cur->is_success.end(), [](bool i){ return i; }) ) {
-
+    while ( !this->fqueue.empty() ) {
         cur = this->fqueue.front();
         this->fqueue.pop();
 
@@ -222,9 +220,9 @@ void FlowFree::createTreeOneFlow() {
 
         cout << "cur mask: " << *(cur->mask_itr) << endl;
         cout << "success:";
-        for (const auto i: cur->is_success)
-            cout << i << ' ';
-        cout << endl;
+//        for (const auto i: cur->is_success)
+//            cout << i << ' ';
+//        cout << endl;
 
         cout << "cur node:" << endl;
         this->printNode(cur);
@@ -371,8 +369,9 @@ void FlowFree::createTreeOneFlow() {
             }
         }
 
-        cout << "depth: " << cur->depth
-            << ", child node: " << cur->next.size()
+        cout << "node depth: " << cur->depth
+            << ", node id: " << cur->id
+            << ", node child: " << cur->next.size()
 #ifdef STACK_QUEUE
             << ", stack size: " << this->fstack.size()
 #else
