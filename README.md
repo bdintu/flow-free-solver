@@ -19,5 +19,6 @@ g++ main.cc
 
 ## Run
 ```sh
-./a.out example/m1.txt
+./a.out path-of-matrix algorithms
+./a.out example/m1.txt 0
 ```

@@ -4,25 +4,11 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include <stack>
+#include <queue>
 
 #define MASK_NUM 5
 #define TABLE_SIZE MASK_NUM * MASK_NUM
-
-/*  define DFS if you choose DFS
- * or define BFS if you choose BFS
-*/
-//#define DFS j
-#define BFS j
-
-#ifdef DFS
-#define STACK_QUEUE j
-#endif
-
-#ifdef STACK_QUEUE
-#include <stack>
-#else
-#include <queue>
-#endif
 
 using namespace std;
 
@@ -42,22 +28,21 @@ public:
 	FlowFree();
 	~FlowFree();
 
-    void readFile(const char* path);
+    void readFile(const char*);
     void printNode(Node* node);
     void selectMask();
-    void createTreeAllFlow();
-    void createTreeOneFlow();
+    void setAlgorithm(const char*);
+    void createTree();
 
 private:
     Node* newNode(Node*, int, int, int);
 
-	Node* root;
-#ifdef STACK_QUEUE
     stack<Node*> fstack;
-#else
     queue<Node*> fqueue;
-#endif
+
+	Node* root;
     vector<int> priority;
+    int algorithm;
     int node_id;
 };
 
@@ -193,25 +178,42 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int node_id) {
 }
 
 
-void FlowFree::createTreeOneFlow() {
+void FlowFree::setAlgorithm(const char* algorithm) {
+    this->algorithm = atoi(algorithm);
+
+    cout << "select Algorithm";
+    if (this->algorithm == 0)
+        cout << "Breadth-first search" << endl;
+    else
+        cout << "Depth-first search" << endl;
+}
+
+
+void FlowFree::createTree() {
 
     Node* cur = this->root;
 
-#ifdef STACK_QUEUE
-    this->fstack.push(this->root);
-    
-    while ( !this->fstack.empty() ) {
-        cur = this->fstack.top();
-        this->fstack.pop();
+    if (this->algorithm == 0)
+        this->fstack.push(this->root);
+    else
+        this->fqueue.push(this->root);
 
-#else
-    this->fqueue.push(this->root);
-    
-    while ( !this->fqueue.empty() ) {
-        cur = this->fqueue.front();
-        this->fqueue.pop();
+    while(1) {
 
-#endif
+        if (this->algorithm == 0) {
+            if ( this->fstack.empty() )
+                break;
+
+            cur = this->fstack.top();
+            this->fstack.pop();
+
+        } else {
+            if ( this->fqueue.empty() )
+                break;
+
+            cur = this->fqueue.front();
+            this->fqueue.pop();
+        }
 
         cout << "cur mask: " << *(cur->mask_itr) << endl;
         cout << "cur node:" << endl;
@@ -229,11 +231,10 @@ void FlowFree::createTreeOneFlow() {
                     advance(node->mask_itr, 1);
                     cur->next.push_back(node);
 
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else                    
-                    this->fqueue.push(node);
-#endif
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "<- Found" << endl;
                     this->printNode(node);
@@ -245,11 +246,10 @@ void FlowFree::createTreeOneFlow() {
                     advance(node->mask_itr, 1);
                     cur->next.push_back(node);
 
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else                    
-                    this->fqueue.push(node);
-#endif
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "-> Found" << endl;
                     this->printNode(node);
@@ -261,11 +261,10 @@ void FlowFree::createTreeOneFlow() {
                     advance(node->mask_itr, 1);
                     cur->next.push_back(node);
 
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else                    
-                    this->fqueue.push(node);
-#endif
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "^ Found" << endl;
                     this->printNode(node);
@@ -277,11 +276,10 @@ void FlowFree::createTreeOneFlow() {
                     advance(node->mask_itr, 1);
                     cur->next.push_back(node);
 
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else                    
-                    this->fqueue.push(node);
-#endif
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "V Found" << endl;
                     this->printNode(node);
@@ -292,13 +290,12 @@ void FlowFree::createTreeOneFlow() {
                 if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i-1, this->node_id);
-
                     cur->next.push_back(node);
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else
-                    this->fqueue.push(node);
-#endif
+
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "<-" << endl;
                     this->printNode(node);
@@ -307,13 +304,12 @@ void FlowFree::createTreeOneFlow() {
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i+1, this->node_id);
-
                     cur->next.push_back(node);
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else
-                    this->fqueue.push(node);
-#endif
+
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "->" << endl;
                     this->printNode(node);
@@ -322,13 +318,12 @@ void FlowFree::createTreeOneFlow() {
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == 0) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i-MASK_NUM, this->node_id);
-
                     cur->next.push_back(node);
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else
-                    this->fqueue.push(node);
-#endif
+
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "^" << endl;
                     this->printNode(node);
@@ -337,13 +332,12 @@ void FlowFree::createTreeOneFlow() {
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == 0) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i+MASK_NUM, this->node_id);
-
                     cur->next.push_back(node);
-#ifdef STACK_QUEUE
-                    this->fstack.push(node);
-#else
-                    this->fqueue.push(node);
-#endif
+
+                    if (this->algorithm == 0)
+                        this->fstack.push(node);
+                    else
+                        this->fqueue.push(node);
 
                     clog << "V" << endl;
                     this->printNode(node);
@@ -353,17 +347,23 @@ void FlowFree::createTreeOneFlow() {
 
         cout << "node depth: " << cur->depth
             << ", node id: " << cur->id
-            << ", node child: " << cur->next.size()
-#ifdef STACK_QUEUE
-            << ", stack size: " << this->fstack.size()
-#else
-            << ", queue size: " << this->fqueue.size()
-#endif
-            << endl;
+            << ", node child: " << cur->next.size();
+
+        if (this->algorithm == 0)
+            cout << ", stack size: " << this->fstack.size();
+        else
+            cout << ", queue size: " << this->fqueue.size();
+
+        cout << endl;
     }
 }
 
 
+/*
+ * argv[1]: path of matrix
+ * argv[2]: 0 -> BFS
+ *          1 -> DFS
+*/
 int main(int argc, char** argv) {
     if (!argc) {
         cerr << "no find arg";
@@ -373,7 +373,8 @@ int main(int argc, char** argv) {
     FlowFree* flowfree = new FlowFree();
     flowfree->readFile(argv[1]);
     flowfree->selectMask();
-    flowfree->createTreeOneFlow();
+    flowfree->setAlgorithm(argv[2]);
+    flowfree->createTree();
 
     return 0;
 }
