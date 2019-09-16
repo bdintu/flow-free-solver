@@ -185,10 +185,6 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int node_id) {
     node->table[new_index] = cur->table[cur_index];
     node->table[cur_index] = cur->table[cur_index] + 2*MASK_NUM;
 
-//    node->is_success = cur->is_success;
-//    if (success_mask)
-//        node->is_success[success_mask -1] = true;
-
     node->mask_itr = cur->mask_itr;
     node->depth = cur->depth +1;
     node->id = node_id;
@@ -218,8 +214,6 @@ void FlowFree::createTreeOneFlow() {
 #endif
 
         cout << "cur mask: " << *(cur->mask_itr) << endl;
-        cout << "success:";
-
         cout << "cur node:" << endl;
         this->printNode(cur);
 
@@ -241,10 +235,8 @@ void FlowFree::createTreeOneFlow() {
                     this->fqueue.push(node);
 #endif
 
-                    clog << "<- !! " << *(node->mask_itr) << endl;
+                    clog << "<- Found" << endl;
                     this->printNode(node);
-
-                    break;
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
@@ -259,10 +251,8 @@ void FlowFree::createTreeOneFlow() {
                     this->fqueue.push(node);
 #endif
 
-                    clog << "-> !! " << *(node->mask_itr) << endl;
+                    clog << "-> Found" << endl;
                     this->printNode(node);
-
-                    break;
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == cur->table[i] + MASK_NUM) {
@@ -277,10 +267,8 @@ void FlowFree::createTreeOneFlow() {
                     this->fqueue.push(node);
 #endif
 
-                    clog << "^ !! " << *(node->mask_itr) << endl;
+                    clog << "^ Found" << endl;
                     this->printNode(node);
-
-                    break;
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == cur->table[i] + MASK_NUM) {
@@ -295,10 +283,8 @@ void FlowFree::createTreeOneFlow() {
                     this->fqueue.push(node);
 #endif
 
-                    clog << "V !! " << *(node->mask_itr) << endl;
+                    clog << "V Found" << endl;
                     this->printNode(node);
-
-                    break;
                 }
 
 
