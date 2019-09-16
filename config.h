@@ -1,0 +1,2 @@
+#define MASK_NUM 5
+#define TABLE_SIZE MASK_NUM * MASK_NUM

@@ -7,20 +7,11 @@
 #include <stack>
 #include <queue>
 
-#define MASK_NUM 5
-#define TABLE_SIZE MASK_NUM * MASK_NUM
+#include "config.h"
+#include "node.cc"
 
 using namespace std;
 
-
-struct Node{
-    array<int, TABLE_SIZE> table = {0};
-    vector<Node*> next;
-
-    vector<int>::iterator mask_itr;
-    int depth = 0;
-    int id = 0;
-};
 
 
 class FlowFree{
