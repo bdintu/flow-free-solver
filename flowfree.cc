@@ -7,12 +7,8 @@
 #include <stack>
 #include <queue>
 
-#ifndef FLOWFREE_I
-#define FLOWFREE_I
-
 #include "flowfree.h"
 
-#endif
 
 using namespace std;
 
