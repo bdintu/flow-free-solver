@@ -9,8 +9,8 @@ using namespace std;
 
 /*
  * argv[1]: path of matrix
- * argv[2]: 0 -> BFS
- *          1 -> DFS
+ * argv[2]: 0 -> DFS
+ *          1 -> BFS
 */
 int main(int argc, char** argv) {
     if (!argc) {
