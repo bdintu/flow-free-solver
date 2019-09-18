@@ -106,6 +106,11 @@ void FlowFree::printSummary(Node* node) {
       << endl
       << endl;
 
+    cout << "active node priority:" << endl;
+        for (const auto i: this->priority)
+            cout << i << ' ';
+        cout << endl;
+
     cout << "Problem:" << endl;
     this->printNode(this->root);
 
