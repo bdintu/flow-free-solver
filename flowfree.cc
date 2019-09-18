@@ -80,6 +80,16 @@ void FlowFree::setAlgorithm(const char* algorithm) {
 }
 
 void FlowFree::printSummary(Node* node) {
+    for (int i=0; i<64; i++)
+        cout << "-";
+    cout << endl;
+    for (int i=0; i<28; i++)
+        cout << " ";
+    cout << "Summary" << endl;
+    for (int i=0; i<64; i++)
+        cout << "-";
+    cout << endl;
+
     cout << "time usage: "
       << this->time_usage
       << " ms"
@@ -93,5 +103,12 @@ void FlowFree::printSummary(Node* node) {
       << "tree depth: "
       << node->depth
       << " level"
+      << endl
       << endl;
+
+    cout << "Problem:" << endl;
+    this->printNode(this->root);
+
+    cout << "Slove:" << endl;
+    this->printNode(node);
 }
