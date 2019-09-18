@@ -40,10 +40,9 @@ void FlowFree::createTree() {
 
         if (!*(cur->mask_itr)) {
             auto t2 = Clock::now();
-            cout << "time usage: " 
-              << chrono::duration_cast<chrono::microseconds>(t2 - t1).count() / 1000.0
-              << " ms"
-              << endl;
+            this->time_usage = chrono::duration_cast<chrono::microseconds>(t2 - t1).count() / 1000.0;
+
+            this->printSummary(cur);
             break;
         }
 

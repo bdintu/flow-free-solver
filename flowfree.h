@@ -20,6 +20,7 @@ public:
     void selectMask();
     void setAlgorithm(const char*);
     void createTree();
+    void printSummary(Node* node);
 
 private:
     Node* newNode(Node*, int, int, int);
@@ -32,6 +33,7 @@ private:
 
     int algorithm;
     int node_id;
+    double time_usage;
 };
 
 #endif

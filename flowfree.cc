@@ -78,3 +78,20 @@ void FlowFree::setAlgorithm(const char* algorithm) {
     else
         cout << "Depth-first search" << endl;
 }
+
+void FlowFree::printSummary(Node* node) {
+    cout << "time usage: "
+      << this->time_usage
+      << " ms"
+      << endl
+
+      << "node created: "
+      << this->node_id
+      << " node"
+      << endl
+
+      << "tree depth: "
+      << node->depth
+      << " level"
+      << endl;
+}
