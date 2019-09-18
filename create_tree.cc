@@ -1,9 +1,14 @@
 #include <iostream>
+#include <chrono>
 
 #include "flowfree.h"
 
+typedef std::chrono::high_resolution_clock Clock;
+
 
 void FlowFree::createTree() {
+
+    auto t1 = Clock::now();
 
     Node* cur = this->root;
 
@@ -33,8 +38,14 @@ void FlowFree::createTree() {
         cout << "cur node:" << endl;
         this->printNode(cur);
 
-        if (!*(cur->mask_itr))
+        if (!*(cur->mask_itr)) {
+            auto t2 = Clock::now();
+            cout << "time usage: " 
+              << chrono::duration_cast<chrono::microseconds>(t2 - t1).count() / 1000.0
+              << " ms"
+              << endl;
             break;
+        }
 
         for (int i=0; i<TABLE_SIZE; i++) {
             if (cur->table[i] == *(cur->mask_itr)) {
