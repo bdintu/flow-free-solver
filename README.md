@@ -1,6 +1,9 @@
 # flow-free-uninformed-search
 Artificial intelligence Assigment 1
 
+## Reference
+[Flow Free solver - matt_zucker](https://mzucker.github.io/2016/08/28/flow-solver.html)
+
 ## Install
 ```sh
 apt install build-essential
@@ -8,8 +11,8 @@ apt install build-essential
 
 ## Clone
 ```sh
-git clone https://github.com/bdintu/flow-free-uninformed-search
-cd flow-free-uninformed-search
+git clone https://github.com/bdintu/flow-free-solver
+cd flow-free-solver
 ```
 
 ## Build
