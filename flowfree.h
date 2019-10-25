@@ -20,7 +20,11 @@ public:
     void selectMask();
     void setAlgorithm(const char*);
     void createTree();
+    void createHueristicTable();
+    void createHueristicTable1D(array<int, TABLE_SIZE>&, const array<int, 2>&);
     void printSummary(Node* node);
+
+    int algorithm;
 
 private:
     Node* newNode(Node*, int, int, int);
@@ -30,8 +34,8 @@ private:
 
 	Node* root;
     vector<int> priority;
+    array<array<int, TABLE_SIZE>, MASK_NUM> heuristic_table;
 
-    int algorithm;
     int node_id;
     double time_usage;
 };

@@ -1,5 +1,5 @@
 # flow-free-solver
-Artificial intelligence Assigment 1
+Artificial intelligence assigment
 
 ## Reference
 [Flow Free solver - matt_zucker](https://mzucker.github.io/2016/08/28/flow-solver.html)
@@ -22,6 +22,17 @@ g++ main.cc
 
 ## Run
 ```sh
-./a.out path-of-matrix algorithms
+./a.out <path-of-matrix> <algorithms>
+```
+
+### Algorithm
+- 0 - DFS
+- 1 - BFS
+- 2 - Heuristic
+
+### Example
+```
 ./a.out example/m1.txt 0
+./a.out example/m1.txt 1
+./a.out example/m1.txt 2
 ```

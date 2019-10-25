@@ -20,7 +20,6 @@ FlowFree::FlowFree(){
 
 
 FlowFree::~FlowFree(){
-
 }
 
 
@@ -72,11 +71,20 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int node_id) {
 void FlowFree::setAlgorithm(const char* algorithm) {
     this->algorithm = atoi(algorithm);
 
-    cout << "select Algorithm";
-    if (this->algorithm == 0)
-        cout << "Breadth-first search" << endl;
-    else
-        cout << "Depth-first search" << endl;
+    cout << endl << "# select algorithm ";
+    switch (this->algorithm) {
+        case 0 :
+            cout << "Depth-first search" << endl;
+        break;
+
+        case 1 :
+            cout << "Breadth-first search" << endl;
+        break;
+
+        case 2 :
+            cout << "Heuristic search" << endl;
+        break;
+    }
 }
 
 void FlowFree::printSummary(Node* node) {

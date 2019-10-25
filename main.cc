@@ -3,6 +3,7 @@
 #include "flowfree.cc"
 #include "select_mask.cc"
 #include "create_tree.cc"
+#include "create_heuristic_table.cc"
 
 using namespace std;
 
@@ -22,7 +23,12 @@ int main(int argc, char** argv) {
     flowfree->readFile(argv[1]);
     flowfree->selectMask();
     flowfree->setAlgorithm(argv[2]);
-    flowfree->createTree();
+
+    if (flowfree->algorithm == 2) {
+        flowfree->createHueristicTable();
+    } else {
+        flowfree->createTree();
+    }
 
     return 0;
 }
