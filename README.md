@@ -1,4 +1,4 @@
-# flow-free-uninformed-search
+# flow-free-solver
 Artificial intelligence Assigment 1
 
 ## Reference
