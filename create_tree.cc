@@ -77,32 +77,28 @@ void FlowFree::createTree() {
             if (cur->table[i] == *(cur->mask_itr)) {
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i-1, this->node_id++);
+                    Node* node = this->newNodeAndPushToArrayTree(cur, node, i, i-1, this->node_id++);
                     this->printNode(node, '<');
 
                     advance(node->mask_itr, 1);
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i+1, this->node_id++);
+                    Node* node = newNodeAndPushToArrayTree(cur, node, i, i+1, this->node_id++);
                     this->printNode(node, '>');
 
                     advance(node->mask_itr, 1);
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == cur->table[i] + MASK_NUM) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i-MASK_NUM, this->node_id++);
+                    Node* node = this->newNodeAndPushToArrayTree(cur, node, i, i-MASK_NUM, this->node_id++);
                     this->printNode(node, '^');
 
                     advance(node->mask_itr, 1);
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == cur->table[i] + MASK_NUM) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i+MASK_NUM, this->node_id++);
+                    Node* node = newNodeAndPushToArrayTree(cur, node, i, i+MASK_NUM, this->node_id++);
                     this->printNode(node, 'V');
 
                     advance(node->mask_itr, 1);
@@ -111,26 +107,22 @@ void FlowFree::createTree() {
 
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i-1, this->node_id++);
+                    Node* node = this->newNodeAndPushToArrayTree(cur, node, i, i-1, this->node_id++);
                     this->printNode(node, '<');
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i+1, this->node_id++);
+                    Node* node = this->newNodeAndPushToArrayTree(cur, node, i, i+1, this->node_id++);
                     this->printNode(node, '>');
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == 0) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i-MASK_NUM, this->node_id++);
+                    Node* node = this->newNodeAndPushToArrayTree(cur, node, i, i-MASK_NUM, this->node_id++);
                     this->printNode(node ,'^');
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == 0) {
-                    Node* node;
-                    this->newNodeAndPushToArrayTree(cur, node, i, i+MASK_NUM, this->node_id++);
+                    Node* node = newNodeAndPushToArrayTree(cur, node, i, i+MASK_NUM, this->node_id++);
                     this->printNode(node, '^');
                 }
             }
