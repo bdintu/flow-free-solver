@@ -5,6 +5,16 @@
 
 typedef std::chrono::high_resolution_clock Clock;
 
+void FlowFree::pushToArrayAndTree(Node* cur, Node* node) {
+    cur->next.push_back(node);
+
+    if (this->algorithm == 0)
+        this->fqueue.push(node);
+    else if (this->algorithm == 1)
+        this->fstack.push(node);
+    else
+        this->pqueue.push(node);
+}
 
 void FlowFree::createTree() {
 
@@ -58,121 +68,61 @@ void FlowFree::createTree() {
             if (cur->table[i] == *(cur->mask_itr)) {
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i-1, this->node_id);
-                    cur->next.push_back(node);
+                    Node* node = this->newNode(cur, i, i-1, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, '<');
+
                     advance(node->mask_itr, 1);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "<- Found" << endl;
-                    this->printNode(node);
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i+1, this->node_id);
-                    cur->next.push_back(node);
+                    Node* node = this->newNode(cur, i, i+1, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, '>');
+
                     advance(node->mask_itr, 1);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "-> Found" << endl;
-                    this->printNode(node);
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == cur->table[i] + MASK_NUM) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i-MASK_NUM, this->node_id);
-                    cur->next.push_back(node);
+                    Node* node = this->newNode(cur, i, i-MASK_NUM, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, '^');
+
                     advance(node->mask_itr, 1);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "^ Found" << endl;
-                    this->printNode(node);
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == cur->table[i] + MASK_NUM) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i+MASK_NUM, this->node_id);
-                    cur->next.push_back(node);
+                    Node* node = this->newNode(cur, i, i+MASK_NUM, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, 'V');
+
                     advance(node->mask_itr, 1);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "V Found" << endl;
-                    this->printNode(node);
                 }
 
 
 
                 if (i%MASK_NUM !=0 && cur->table[i-1] == 0) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i-1, this->node_id);
-                    cur->next.push_back(node);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "<-" << endl;
-                    this->printNode(node);
+                    Node* node = this->newNode(cur, i, i-1, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, '<');
                 }
 
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == 0) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i+1, this->node_id);
-                    cur->next.push_back(node);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "->" << endl;
-                    this->printNode(node);
+                    Node* node = this->newNode(cur, i, i+1, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, '>');
                 }
 
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == 0) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i-MASK_NUM, this->node_id);
-                    cur->next.push_back(node);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "^" << endl;
-                    this->printNode(node);
+                    Node* node = this->newNode(cur, i, i-MASK_NUM, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node ,'^');
                 }
 
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == 0) {
-                    this->node_id++;
-                    Node* node = this->newNode(cur, i, i+MASK_NUM, this->node_id);
-                    cur->next.push_back(node);
-
-                    if (this->algorithm == 0)
-                        this->fqueue.push(node);
-                    else
-                        this->fstack.push(node);
-
-                    clog << "V" << endl;
-                    this->printNode(node);
+                    Node* node = this->newNode(cur, i, i+MASK_NUM, this->node_id++);
+                    this->pushToArrayAndTree(cur, node);
+                    this->printNode(node, '^');
                 }
             }
         }

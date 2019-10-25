@@ -16,9 +16,3 @@ struct Node {
     int depth = 0;
     int id = 0;
 };
-
-struct Cmp {
-    bool operator ()(const Node* lhs, const Node* rhs) const {
-        return lhs->estimate <= rhs->estimate;
-    }
-};

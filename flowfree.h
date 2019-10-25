@@ -17,8 +17,10 @@ public:
 
     void readFile(const char*);
     void printNode(Node* node);
+    void printNode(Node* node, char);
     void selectMask();
     void setAlgorithm(const char*);
+    void pushToArrayAndTree(Node*, Node*);
     void createTree();
     void createHueristicTable();
     void createHueristicTable1D(array<int, TABLE_SIZE>&, const array<int, 2>&);

@@ -52,6 +52,11 @@ void FlowFree::printNode(Node* node) {
     cout << endl;
 }
 
+void FlowFree::printNode(Node* node, char d) {
+    cout << d << endl;
+    this->printNode(node);
+}
+
 
 Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int node_id) {
     Node* node = new Node;
