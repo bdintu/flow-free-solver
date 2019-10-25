@@ -21,9 +21,9 @@ int main(int argc, char** argv) {
 
     if (flowfree->algorithm == 2) {
         flowfree->createHueristicTable();
-    } else {
-        flowfree->createTree();
     }
+
+    flowfree->createTree();
 
     return 0;
 }
