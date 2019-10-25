@@ -26,8 +26,8 @@ g++ main.cc
 ```
 
 ### Algorithm
-- 0 - DFS
-- 1 - BFS
+- 0 - BFS
+- 1 - DFS
 - 2 - Heuristic
 
 ### Example

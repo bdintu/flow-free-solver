@@ -13,25 +13,25 @@ void FlowFree::createTree() {
     Node* cur = this->root;
 
     if (this->algorithm == 0)
-        this->fstack.push(this->root);
-    else
         this->fqueue.push(this->root);
+    else
+        this->fstack.push(this->root);
 
     while(1) {
 
         if (this->algorithm == 0) {
-            if ( this->fstack.empty() )
-                break;
-
-            cur = this->fstack.top();
-            this->fstack.pop();
-
-        } else {
             if ( this->fqueue.empty() )
                 break;
 
             cur = this->fqueue.front();
             this->fqueue.pop();
+
+        } else {
+            if ( this->fstack.empty() )
+                break;
+
+            cur = this->fstack.top();
+            this->fstack.pop();
         }
 
         cout << "cur mask: " << *(cur->mask_itr) << endl;
@@ -52,13 +52,13 @@ void FlowFree::createTree() {
                 if (i%MASK_NUM !=0 && cur->table[i-1] == cur->table[i] + MASK_NUM) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i-1, this->node_id);
-                    advance(node->mask_itr, 1);
                     cur->next.push_back(node);
+                    advance(node->mask_itr, 1);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "<- Found" << endl;
                     this->printNode(node);
@@ -67,13 +67,13 @@ void FlowFree::createTree() {
                 if (i%MASK_NUM !=MASK_NUM-1 && cur->table[i+1] == cur->table[i] + MASK_NUM) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i+1, this->node_id);
-                    advance(node->mask_itr, 1);
                     cur->next.push_back(node);
+                    advance(node->mask_itr, 1);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "-> Found" << endl;
                     this->printNode(node);
@@ -82,13 +82,13 @@ void FlowFree::createTree() {
                 if (i/MASK_NUM !=0 && cur->table[i-MASK_NUM] == cur->table[i] + MASK_NUM) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i-MASK_NUM, this->node_id);
-                    advance(node->mask_itr, 1);
                     cur->next.push_back(node);
+                    advance(node->mask_itr, 1);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "^ Found" << endl;
                     this->printNode(node);
@@ -97,13 +97,13 @@ void FlowFree::createTree() {
                 if (i/MASK_NUM !=MASK_NUM-1 && cur->table[i+MASK_NUM] == cur->table[i] + MASK_NUM) {
                     this->node_id++;
                     Node* node = this->newNode(cur, i, i+MASK_NUM, this->node_id);
-                    advance(node->mask_itr, 1);
                     cur->next.push_back(node);
+                    advance(node->mask_itr, 1);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "V Found" << endl;
                     this->printNode(node);
@@ -117,9 +117,9 @@ void FlowFree::createTree() {
                     cur->next.push_back(node);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "<-" << endl;
                     this->printNode(node);
@@ -131,9 +131,9 @@ void FlowFree::createTree() {
                     cur->next.push_back(node);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "->" << endl;
                     this->printNode(node);
@@ -145,9 +145,9 @@ void FlowFree::createTree() {
                     cur->next.push_back(node);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "^" << endl;
                     this->printNode(node);
@@ -159,9 +159,9 @@ void FlowFree::createTree() {
                     cur->next.push_back(node);
 
                     if (this->algorithm == 0)
-                        this->fstack.push(node);
-                    else
                         this->fqueue.push(node);
+                    else
+                        this->fstack.push(node);
 
                     clog << "V" << endl;
                     this->printNode(node);
@@ -174,9 +174,9 @@ void FlowFree::createTree() {
             << ", node child: " << cur->next.size();
 
         if (this->algorithm == 0)
-            cout << ", stack size: " << this->fstack.size();
-        else
             cout << ", queue size: " << this->fqueue.size();
+        else
+            cout << ", stack size: " << this->fstack.size();
 
         cout << endl;
     }

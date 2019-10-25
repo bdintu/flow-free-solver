@@ -74,11 +74,11 @@ void FlowFree::setAlgorithm(const char* algorithm) {
     cout << endl << "# select algorithm ";
     switch (this->algorithm) {
         case 0 :
-            cout << "Depth-first search" << endl;
+            cout << "Breadth-first search" << endl;
         break;
 
         case 1 :
-            cout << "Breadth-first search" << endl;
+            cout << "Depth-first search" << endl;
         break;
 
         case 2 :
