@@ -16,8 +16,8 @@ int main(int argc, char** argv) {
 
     FlowFree* flowfree = new FlowFree();
     flowfree->readFile(argv[1]);
-    flowfree->selectMask();
     flowfree->setAlgorithm(argv[2]);
+    flowfree->selectMask();
 
     if (flowfree->algorithm == 2) {
         flowfree->createHueristicTable();

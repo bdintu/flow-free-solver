@@ -76,4 +76,7 @@ void FlowFree::selectMask() {
     clog << endl << "# table after select mask" << endl;
     for (int i=0; i<TABLE_SIZE; i++)
         clog << "index: " << i << " mask: " << cur->table[i] << endl;
+
+    if (this->algorithm == 2)
+        cur->cost_to_come = 0;
 }

@@ -20,7 +20,7 @@ public:
     void printNode(Node* node, char);
     void selectMask();
     void setAlgorithm(const char*);
-    void pushToArrayAndTree(Node*, Node*);
+
     void createTree();
     void createHueristicTable();
     void createHueristicTable1D(array<int, TABLE_SIZE>&, const array<int, 2>&);
@@ -30,6 +30,8 @@ public:
 
 private:
     Node* newNode(Node*, int, int, int);
+    Node* newNode(Node*, int, int, int, int);
+    Node* newNodeAndPushToArrayTree(Node*, Node*, int , int , int);
 
     stack<Node*> fstack;
     queue<Node*> fqueue;
