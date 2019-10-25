@@ -64,6 +64,9 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int node_id) {
     node->depth = cur->depth +1;
     node->id = node_id;
 
+    node->cost_to_come = cur->cost_to_come +1;
+    // node->estimate = node->cost_to_come + heuristic;
+
     return node;
 }
 

@@ -14,8 +14,10 @@ void FlowFree::createTree() {
 
     if (this->algorithm == 0)
         this->fqueue.push(this->root);
-    else
+    else if (this->algorithm == 1)
         this->fstack.push(this->root);
+    else
+        this->pqueue.push(this->root);
 
     while(1) {
 
@@ -26,12 +28,18 @@ void FlowFree::createTree() {
             cur = this->fqueue.front();
             this->fqueue.pop();
 
-        } else {
+        } else if (this->algorithm == 1) {
             if ( this->fstack.empty() )
                 break;
 
             cur = this->fstack.top();
             this->fstack.pop();
+        } else {
+            if ( this->pqueue.empty() )
+                break;
+
+            cur = this->pqueue.top();
+            this->pqueue.pop();
         }
 
         cout << "cur mask: " << *(cur->mask_itr) << endl;

@@ -5,13 +5,13 @@
 using namespace std;
 
 
-struct Node{
+struct Node {
     array<int, TABLE_SIZE> table = {0};
     vector<Node*> next;
 
     vector<int>::iterator mask_itr;
-    int heuristic;
-    int cons;
+    int estimate;
+    int cost_to_come;
 
     int depth = 0;
     int id = 0;
@@ -19,6 +19,6 @@ struct Node{
 
 struct Cmp {
     bool operator ()(const Node* lhs, const Node* rhs) const {
-        return lhs->heuristic <= rhs->heuristic;
+        return lhs->estimate <= rhs->estimate;
     }
 };

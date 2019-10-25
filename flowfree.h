@@ -4,7 +4,6 @@
 #include <vector>
 #include <stack>
 #include <queue>
-#include <set>
 
 #include "config.h"
 #include "node.h"
@@ -32,7 +31,7 @@ private:
 
     stack<Node*> fstack;
     queue<Node*> fqueue;
-    set<Node*, Cmp> fset;
+    priority_queue<Node*> pqueue;
 
 	Node* root;
     vector<int> priority;
