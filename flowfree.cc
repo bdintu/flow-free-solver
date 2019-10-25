@@ -55,6 +55,15 @@ void FlowFree::printNode(Node* node) {
 void FlowFree::printNode(Node* node, char d) {
     cout << d << endl;
     this->printNode(node);
+
+    if (this->algorithm == 2)
+        cout << "estimate: " << node->estimate << " = "
+            << "cost to come: " << node->cost_to_come << " + "
+            << "heuristic: " << node->heuristic << endl;
+
+    for (int i=0; i<32; ++i)
+        cout << '-';
+    cout << endl;
 }
 
 
@@ -77,6 +86,7 @@ Node* FlowFree::newNode(Node* cur, int cur_index, int new_index, int node_id, in
     Node* node = this->newNode(cur, cur_index, new_index, node_id);
 
     node->cost_to_come = cur->cost_to_come +1;
+    node->heuristic = heuristic;
     node->estimate = node->cost_to_come + heuristic;
 
     return node;

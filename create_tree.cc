@@ -9,7 +9,7 @@ Node* FlowFree::newNodeAndPushToArrayTree(Node* cur, Node* node, int cur_index, 
     if (this->algorithm != 2) {
         node = this->newNode(cur, cur_index, new_index, node_id);
     } else {
-        int heuristic = this->heuristic_table[*cur->mask_itr][new_index];
+        int heuristic = this->heuristic_table[*cur->mask_itr -1][new_index];
         node = this->newNode(cur, cur_index, new_index, node_id, heuristic);
     }
 
@@ -60,6 +60,10 @@ void FlowFree::createTree() {
             cur = this->pqueue.top();
             this->pqueue.pop();
         }
+
+        for (int i=0; i<64; ++i)
+            cout << '-';
+        cout << endl;
 
         cout << "cur mask: " << *(cur->mask_itr) << endl;
         cout << "cur node:" << endl;
@@ -134,8 +138,10 @@ void FlowFree::createTree() {
 
         if (this->algorithm == 0)
             cout << ", queue size: " << this->fqueue.size();
-        else
+        else if (this->algorithm == 1)
             cout << ", stack size: " << this->fstack.size();
+        else
+            cout << ", pqueue size: " << this->pqueue.size();
 
         cout << endl;
     }

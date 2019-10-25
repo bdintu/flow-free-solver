@@ -35,7 +35,7 @@ private:
 
     stack<Node*> fstack;
     queue<Node*> fqueue;
-    priority_queue<Node*> pqueue;
+    priority_queue<Node*, vector<Node*>, Cmp> pqueue;
 
 	Node* root;
     vector<int> priority;

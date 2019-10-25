@@ -12,7 +12,14 @@ struct Node {
     vector<int>::iterator mask_itr;
     int estimate;
     int cost_to_come;
+    int heuristic;
 
     int depth = 0;
     int id = 0;
+};
+
+struct Cmp {
+    bool operator()(const Node* lhs, const Node* rhs) {
+        return lhs->estimate > rhs->estimate;
+    }
 };
