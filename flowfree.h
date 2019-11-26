@@ -25,7 +25,8 @@ public:
     void createHueristicTable();
     void createInitHueristicTable();
     void createManhattanHueristicTable(array<int, TABLE_SIZE>&, const array<int, 2>&);
-    void createObstacleHueristicTable(array<int, TABLE_SIZE>&, const array<int, 2>&);
+    void createObstacleHueristicTable(array<int, TABLE_SIZE>&, const int);
+    int min_neighbors_plus(array<int, TABLE_SIZE>&, array<int, TABLE_SIZE>&, int);
     void printSummary(Node* node);
 
     int algorithm;
@@ -35,8 +36,8 @@ private:
     Node* newNode(Node*, int, int, int, int);
     Node* newNodeAndPushToArrayTree(Node*, Node*, int , int , int);
 
-    stack<Node*> fstack;
     queue<Node*> fqueue;
+    stack<Node*> fstack;
     priority_queue<Node*, vector<Node*>, Cmp> pqueue;
 
 	Node* root;
