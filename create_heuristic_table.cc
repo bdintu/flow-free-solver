@@ -67,16 +67,16 @@ void FlowFree::createManhattanHueristicTable(array<int, TABLE_SIZE>& heuristic_t
 int FlowFree::min_neighbors_plus(array<int, TABLE_SIZE>& heuristic_table, array<int, TABLE_SIZE>& visit, int cur) {
     int min = numeric_limits<int>::max();
 
-    if (visit[cur] == 1 && cur%MASK_NUM != 0 && heuristic_table[cur-1] < min)
+    if (visit[cur-1] == 1 && cur%MASK_NUM != 0 && heuristic_table[cur-1] < min)
         min = heuristic_table[cur-1];
 
-    if (visit[cur] == 1 && cur%MASK_NUM != MASK_NUM-1 && heuristic_table[cur+1] < min)
+    if (visit[cur+1] == 1 && cur%MASK_NUM != MASK_NUM-1 && heuristic_table[cur+1] < min)
         min = heuristic_table[cur+1];
 
-    if (visit[cur] == 1 && cur/MASK_NUM != 0 && heuristic_table[cur-MASK_NUM] < min)
+    if (visit[cur-MASK_NUM] == 1 && cur/MASK_NUM != 0 && heuristic_table[cur-MASK_NUM] < min)
         min = heuristic_table[cur-MASK_NUM];
 
-    if (visit[cur] == 1 && cur/MASK_NUM != MASK_NUM-1 && heuristic_table[cur+MASK_NUM] < min)
+    if (visit[cur+MASK_NUM] == 1 && cur/MASK_NUM != MASK_NUM-1 && heuristic_table[cur+MASK_NUM] < min)
         min = heuristic_table[cur+MASK_NUM];
 
     return min == numeric_limits<int>::max() ? 0 : min;
@@ -97,29 +97,17 @@ void FlowFree::createObstacleHueristicTable(array<int, TABLE_SIZE>& heuristic_ta
         cur = stack.top();
         stack.pop();
 
-        if (cur%MASK_NUM != 0 && heuristic_table[cur-1] != numeric_limits<int>::max() && visit[cur-1] == 0) {
+        if (cur%MASK_NUM != 0 && heuristic_table[cur-1] != numeric_limits<int>::max() && visit[cur-1] == 0)
             stack.push(cur-1);
-        }
 
-        if (cur%MASK_NUM != MASK_NUM-1 && heuristic_table[cur+1] != numeric_limits<int>::max() && visit[cur+1] == 0) {
+        if (cur%MASK_NUM != MASK_NUM-1 && heuristic_table[cur+1] != numeric_limits<int>::max() && visit[cur+1] == 0)
             stack.push(cur+1);
-        }
 
-        if (cur/MASK_NUM != 0 && heuristic_table[cur-MASK_NUM] != numeric_limits<int>::max() && visit[cur-MASK_NUM] == 0) {
+        if (cur/MASK_NUM != 0 && heuristic_table[cur-MASK_NUM] != numeric_limits<int>::max() && visit[cur-MASK_NUM] == 0)
             stack.push(cur-MASK_NUM);
-        }
 
-        if (cur/MASK_NUM != MASK_NUM-1 && heuristic_table[cur+MASK_NUM] != numeric_limits<int>::max() && visit[cur+MASK_NUM] == 0) {
+        if (cur/MASK_NUM != MASK_NUM-1 && heuristic_table[cur+MASK_NUM] != numeric_limits<int>::max() && visit[cur+MASK_NUM] == 0)
             stack.push(cur+MASK_NUM);
-        }
-
-            clog << "center of heuristic_table " << cur << endl;
-            for (int j=0; j<TABLE_SIZE; ++j) {
-                clog << heuristic_table[j] << " ";
-
-                if (j!=0 && j%MASK_NUM == MASK_NUM-1)
-                    clog << endl;
-            }
 
         if (cur != center_index) 
             heuristic_table[cur] = min_neighbors_plus(heuristic_table, visit, cur) +1;
@@ -127,5 +115,9 @@ void FlowFree::createObstacleHueristicTable(array<int, TABLE_SIZE>& heuristic_ta
         visit[cur] = 1;
     }
 
-    // heuristic_table[center_index] = numeric_limits<int>::max();
+    heuristic_table[center_index] = numeric_limits<int>::max();
+
+    for (int i=0; i<TABLE_SIZE; ++i)
+        if (heuristic_table[i] == numeric_limits<int>::max())
+            heuristic_table[i] = 0;
 }

@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
         flowfree->createHueristicTable();
     }
 
-    // flowfree->createTree();
+    flowfree->createTree();
 
     return 0;
 }
