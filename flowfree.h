@@ -23,7 +23,9 @@ public:
 
     void createTree();
     void createHueristicTable();
-    void createHueristicTable1D(array<int, TABLE_SIZE>&, const array<int, 2>&);
+    void createInitHueristicTable();
+    void createManhattanHueristicTable(array<int, TABLE_SIZE>&, const array<int, 2>&);
+    void createObstacleHueristicTable(array<int, TABLE_SIZE>&, const array<int, 2>&);
     void printSummary(Node* node);
 
     int algorithm;
